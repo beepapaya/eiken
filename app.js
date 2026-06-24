@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCount: document.getElementById('total-count'),
         progressBar: document.getElementById('progress-bar'),
         errorMessage: document.getElementById('error-message'),
-        partSelect: document.getElementById('part-select')
+        partSelect: document.getElementById('part-select'),
+        autoplayToggle: document.getElementById('autoplay-toggle')
     };
 
     const buttons = {
@@ -26,7 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
         resetProgress: document.getElementById('btn-reset-progress'),
         retry: document.getElementById('retry-btn'),
         nextPart: document.getElementById('btn-next-part'),
-        resetPart: document.getElementById('btn-reset-part')
+        resetPart: document.getElementById('btn-reset-part'),
+        speak: document.getElementById('btn-speak')
     };
 
     // === State ===
@@ -37,12 +39,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const PART_SIZE = 100;
     const STORAGE_KEY = 'vocab_app_mastered_words';
     const PART_STORAGE_KEY = 'vocab_app_current_part';
+    const AUTOPLAY_STORAGE_KEY = 'vocab_app_autoplay';
+    let autoplayEnabled = true;
 
     // === Initialization ===
     init();
 
     function init() {
         showView('loading');
+        
+        // Restore autoplay setting
+        const storedAutoplay = localStorage.getItem(AUTOPLAY_STORAGE_KEY);
+        if (storedAutoplay !== null) {
+            autoplayEnabled = storedAutoplay === 'true';
+        }
+        elements.autoplayToggle.checked = autoplayEnabled;
         
         try {
             // data.jsから読み込まれたwordDataを使用
@@ -169,6 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update display
         elements.englishWord.textContent = currentWord.en;
         elements.japaneseMeaning.textContent = currentWord.ja;
+
+        // Auto play speech if enabled
+        if (autoplayEnabled && currentWord) {
+            speakWord(currentWord.en);
+        }
     }
 
     function handleCorrect() {
@@ -223,7 +239,65 @@ document.addEventListener('DOMContentLoaded', () => {
         views[viewName].classList.add('active');
     }
 
+    // === Speech Synthesis ===
+    let selectedVoice = null;
+
+    function loadVoices() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) return;
+
+        const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+        if (englishVoices.length > 0) {
+            // Priority list of premium/natural english voices
+            // 1. Google US English (super high quality on Chrome)
+            let bestVoice = englishVoices.find(v => v.name.includes('Google US English'));
+            // 2. Any Google English voice
+            if (!bestVoice) bestVoice = englishVoices.find(v => v.name.includes('Google'));
+            // 3. Apple Premium/Enhanced voices (macOS / iOS)
+            if (!bestVoice) bestVoice = englishVoices.find(v => v.name.includes('Premium') || v.name.includes('Enhanced'));
+            // 4. Specific Apple premium voice
+            if (!bestVoice) bestVoice = englishVoices.find(v => v.name === 'Samantha' || v.name === 'Daniel');
+            // 5. Standard US English voice
+            if (!bestVoice) bestVoice = englishVoices.find(v => v.lang === 'en-US');
+            // 6. Any English voice
+            if (!bestVoice) bestVoice = englishVoices[0];
+
+            selectedVoice = bestVoice;
+        }
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices(); // Try to load immediately
+    }
+
+    function speakWord(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
     // === Event Listeners ===
+    buttons.speak.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentWord) {
+            speakWord(currentWord.en);
+        }
+    });
+
+    elements.autoplayToggle.addEventListener('change', (e) => {
+        autoplayEnabled = e.target.checked;
+        localStorage.setItem(AUTOPLAY_STORAGE_KEY, autoplayEnabled);
+    });
+
     buttons.correct.addEventListener('click', (e) => {
         e.stopPropagation();
         handleCorrect();

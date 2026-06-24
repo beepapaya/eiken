@@ -25,6 +25,13 @@
                     <!-- オプションはJSで動的に生成されます -->
                 </select>
             </div>
+            <div class="autoplay-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoplay-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">音声自動再生</span>
+            </div>
         </header>
 
         <main id="app-main">
@@ -54,7 +61,14 @@
             <div id="quiz-state" class="state-view hidden">
                 <div class="flashcard" id="flashcard">
                     <div class="card-front">
-                        <h2 id="english-word" class="word-display">Word</h2>
+                        <div class="word-container">
+                            <h2 id="english-word" class="word-display">Word</h2>
+                            <button id="btn-speak" class="btn-speak" title="発音を聞く">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M13.5 4.06c0-.75-.74-1.23-1.42-.91L6.75 5.86H4.5C3.12 5.86 2 6.98 2 8.36v7.28c0 1.38 1.12 2.5 2.5 2.5h2.25l5.33 2.71c.68.32 1.42-.16 1.42-.91V4.06zM17.5 12c0-1.78-1.02-3.32-2.5-4.07v8.14c1.48-.75 2.5-2.29 2.5-4.07zm3.5 0c0-3.32-2.31-6.1-5.43-6.84v1.85c2.11.7 3.65 2.7 3.65 4.99s-1.54 4.29-3.65 4.99v1.85c3.12-.74 5.43-3.52 5.43-6.84z"/>
+                                </svg>
+                            </button>
+                        </div>
                         <div class="action-buttons" style="margin-top: 2rem;">
                             <button id="btn-incorrect" class="btn btn-danger">
                                 <span class="icon">✖️</span> わからない
