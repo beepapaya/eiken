@@ -109,6 +109,56 @@ h1 {
     font-size: 0.9rem;
 }
 
+/* Part Selector Dropdown */
+.select-wrapper {
+    position: relative;
+    margin-top: 1.25rem;
+    display: inline-block;
+    width: 80%;
+    max-width: 240px;
+}
+
+.part-select {
+    width: 100%;
+    padding: 0.6rem 2.2rem 0.6rem 1rem;
+    font-family: var(--font-jp);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align-last: center;
+}
+
+.part-select:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(30, 41, 59, 0.85);
+}
+
+.part-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+.select-wrapper::after {
+    content: '▼';
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
 /* Progress Bar */
 .progress-container {
     margin-bottom: 2rem;

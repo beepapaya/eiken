@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英単語マスター - 出る順準一級</title>
+    <title>英単語マスター - 英検準一級対策</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- 単語データ (wordData変数) を読み込む -->
@@ -19,7 +19,12 @@
     <div class="container">
         <header>
             <h1>Vocabulary Master</h1>
-            <p class="subtitle">出る順準一級</p>
+            <p class="subtitle">英検準一級対策</p>
+            <div class="select-wrapper">
+                <select id="part-select" class="part-select">
+                    <!-- オプションはJSで動的に生成されます -->
+                </select>
+            </div>
         </header>
 
         <main id="app-main">
@@ -74,8 +79,18 @@
             <div id="completed-state" class="state-view hidden">
                 <div class="celebration">🎉</div>
                 <h2>素晴らしい！</h2>
-                <p>すべての単語をマスターしました！</p>
-                <button id="btn-reset-all" class="btn btn-primary mt-4">最初からやり直す</button>
+                <p id="completed-message">このパートのすべての単語をマスターしました！</p>
+                <div class="completed-buttons mt-4" style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
+                    <button id="btn-next-part" class="btn btn-primary" style="width: 100%;">
+                        次のパートへ進む ➔
+                    </button>
+                    <button id="btn-reset-part" class="btn btn-success" style="width: 100%;">
+                        このパートを最初からやり直す
+                    </button>
+                    <button id="btn-reset-all" class="btn btn-text" style="margin-top: 0.5rem;">
+                        全体の学習記録をリセット
+                    </button>
+                </div>
             </div>
         </main>
 
