@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === DOM Elements ===
     const views = {
         loading: document.getElementById('loading-state'),
+        start: document.getElementById('start-state'),
         error: document.getElementById('error-state'),
         quiz: document.getElementById('quiz-state'),
         completed: document.getElementById('completed-state')
@@ -28,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         retry: document.getElementById('retry-btn'),
         nextPart: document.getElementById('btn-next-part'),
         resetPart: document.getElementById('btn-reset-part'),
-        speak: document.getElementById('btn-speak')
+        speak: document.getElementById('btn-speak'),
+        start: document.getElementById('btn-start'),
+        refresh: document.getElementById('btn-refresh')
     };
 
     // === State ===
@@ -60,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof wordData !== 'undefined' && Array.isArray(wordData) && wordData.length > 0) {
                 allWords = wordData;
                 initPartSelector();
-                updateGameState();
+                // Show Start screen to unlock audio on mobile
+                showView('start');
             } else {
                 throw new Error("単語データ (data.js) が正しく読み込めませんでした。");
             }
@@ -285,7 +289,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function unlockSpeech() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(' ');
+            utterance.volume = 0;
+            window.speechSynthesis.speak(utterance);
+        }
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+            try {
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+            } catch (e) {
+                console.warn('AudioContext resume failed:', e);
+            }
+        }
+    }
+
     // === Event Listeners ===
+    buttons.start.addEventListener('click', (e) => {
+        e.stopPropagation();
+        unlockSpeech();
+        updateGameState();
+    });
+
+    buttons.refresh.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.location.reload();
+    });
+
     buttons.speak.addEventListener('click', (e) => {
         e.stopPropagation();
         if (currentWord) {

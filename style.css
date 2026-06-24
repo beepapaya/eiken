@@ -27,7 +27,8 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding-top: 0;
     overflow: hidden;
     position: relative;
 }
@@ -85,7 +86,7 @@ body {
 .container {
     width: 100%;
     max-width: 480px;
-    padding: 2rem;
+    padding: 0.5rem 2rem 2rem 2rem;
     z-index: 1;
 }
 
@@ -109,7 +110,57 @@ h1 {
     font-size: 0.9rem;
 }
 
-/* Part Selector Dropdown */
+/* Part Selector Dropdown & Header Controls */
+.header-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+.header-controls .select-wrapper {
+    margin-top: 0;
+    width: 100%;
+    max-width: 200px;
+}
+
+.btn-refresh {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    padding: 0;
+}
+
+.btn-refresh:hover {
+    background-color: rgba(99, 102, 241, 0.15);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+    transform: scale(1.05);
+}
+
+.btn-refresh:active {
+    transform: scale(0.95);
+}
+
+.btn-refresh svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-refresh:active svg {
+    transform: rotate(180deg);
+}
+
 .select-wrapper {
     position: relative;
     margin-top: 1.25rem;
@@ -463,6 +514,17 @@ h1 {
     margin-bottom: 1rem;
 }
 
+.welcome-icon {
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+    animation: floatIcon 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatIcon {
+    from { transform: translateY(0) rotate(-5deg); }
+    to { transform: translateY(-12px) rotate(5deg); }
+}
+
 @keyframes bounce {
     from { transform: translateY(0); }
     to { transform: translateY(-20px); }
@@ -497,7 +559,10 @@ footer {
 
 /* Responsiveness */
 @media (max-width: 480px) {
-    .container { padding: 1rem; }
+    body {
+        padding-top: 0;
+    }
+    .container { padding: 0.25rem 1rem 1rem 1rem; }
     .word-display { font-size: 2rem; }
     .meaning-display { font-size: 1.5rem; }
 }

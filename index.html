@@ -18,14 +18,20 @@
 
     <div class="container">
         <header>
-            <h1>Vocabulary Master</h1>
-            <p class="subtitle">英検準一級対策</p>
-            <div class="select-wrapper">
-                <select id="part-select" class="part-select">
-                    <!-- オプションはJSで動的に生成されます -->
-                </select>
+            <h1>英検準一級英単語</h1>
+            <div class="header-controls">
+                <div class="select-wrapper">
+                    <select id="part-select" class="part-select">
+                        <!-- オプションはJSで動的に生成されます -->
+                    </select>
+                </div>
+                <button id="btn-refresh" class="btn-refresh" title="画面を再読み込み">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                </button>
             </div>
-            <div class="autoplay-container">
+            <div class="autoplay-container" style="display: none;">
                 <label class="toggle-switch">
                     <input type="checkbox" id="autoplay-toggle" checked>
                     <span class="toggle-slider"></span>
@@ -48,6 +54,21 @@
             <div id="loading-state" class="state-view active">
                 <div class="spinner"></div>
                 <p>データを読み込んでいます...</p>
+            </div>
+
+            <!-- Start State -->
+            <div id="start-state" class="state-view hidden">
+                <div class="welcome-icon">📖</div>
+                <h2>単語学習を始める</h2>
+                <p class="subtitle" style="margin-bottom: 2rem; max-width: 280px; margin-left: auto; margin-right: auto; line-height: 1.5; font-family: var(--font-jp);">
+                    音声再生を有効にするには、下のボタンを押して開始してください。
+                </p>
+                <button id="btn-start" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    学習を開始する ➔
+                </button>
+                <p class="note" style="margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.8; line-height: 1.4; max-width: 320px; text-align: center; font-family: var(--font-jp);">
+                    ※ スマートフォンで音声が再生されない場合は、本体横のマナーモード（消音スイッチ）がオフになっているか、または音量設定をご確認ください。
+                </p>
             </div>
 
             <!-- Error State -->
