@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // === DOM Elements ===
     const views = {
         loading: document.getElementById('loading-state'),
-        start: document.getElementById('start-state'),
         error: document.getElementById('error-state'),
         quiz: document.getElementById('quiz-state'),
         completed: document.getElementById('completed-state')
@@ -16,8 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCount: document.getElementById('total-count'),
         progressBar: document.getElementById('progress-bar'),
         errorMessage: document.getElementById('error-message'),
-        partSelect: document.getElementById('part-select'),
-        autoplayToggle: document.getElementById('autoplay-toggle')
+        partSelect: document.getElementById('part-select')
     };
 
     const buttons = {
@@ -30,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         nextPart: document.getElementById('btn-next-part'),
         resetPart: document.getElementById('btn-reset-part'),
         speak: document.getElementById('btn-speak'),
-        start: document.getElementById('btn-start'),
         refresh: document.getElementById('btn-refresh')
     };
 
@@ -42,8 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const PART_SIZE = 100;
     const STORAGE_KEY = 'vocab_app_mastered_words';
     const PART_STORAGE_KEY = 'vocab_app_current_part';
-    const AUTOPLAY_STORAGE_KEY = 'vocab_app_autoplay';
-    let autoplayEnabled = true;
+
 
     // === Initialization ===
     init();
@@ -51,20 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         showView('loading');
         
-        // Restore autoplay setting
-        const storedAutoplay = localStorage.getItem(AUTOPLAY_STORAGE_KEY);
-        if (storedAutoplay !== null) {
-            autoplayEnabled = storedAutoplay === 'true';
-        }
-        elements.autoplayToggle.checked = autoplayEnabled;
+
         
         try {
             // data.jsから読み込まれたwordDataを使用
             if (typeof wordData !== 'undefined' && Array.isArray(wordData) && wordData.length > 0) {
                 allWords = wordData;
                 initPartSelector();
-                // Show Start screen to unlock audio on mobile
-                showView('start');
+                updateGameState();
             } else {
                 throw new Error("単語データ (data.js) が正しく読み込めませんでした。");
             }
@@ -185,10 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.englishWord.textContent = currentWord.en;
         elements.japaneseMeaning.textContent = currentWord.ja;
 
-        // Auto play speech if enabled
-        if (autoplayEnabled && currentWord) {
-            speakWord(currentWord.en);
-        }
+
     }
 
     function handleCorrect() {
@@ -289,33 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function unlockSpeech() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(' ');
-            utterance.volume = 0;
-            window.speechSynthesis.speak(utterance);
-        }
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-            try {
-                const ctx = new AudioCtx();
-                if (ctx.state === 'suspended') {
-                    ctx.resume();
-                }
-            } catch (e) {
-                console.warn('AudioContext resume failed:', e);
-            }
-        }
-    }
-
     // === Event Listeners ===
-    buttons.start.addEventListener('click', (e) => {
-        e.stopPropagation();
-        unlockSpeech();
-        updateGameState();
-    });
-
     buttons.refresh.addEventListener('click', (e) => {
         e.stopPropagation();
         window.location.reload();
@@ -326,11 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentWord) {
             speakWord(currentWord.en);
         }
-    });
-
-    elements.autoplayToggle.addEventListener('change', (e) => {
-        autoplayEnabled = e.target.checked;
-        localStorage.setItem(AUTOPLAY_STORAGE_KEY, autoplayEnabled);
     });
 
     buttons.correct.addEventListener('click', (e) => {
